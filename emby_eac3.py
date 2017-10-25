@@ -65,13 +65,17 @@ def main():
             local_path = local_path.replace(unc_path, "/tv_mnt")
 
             print(local_path)
+            _LOGGER.info(local_path)
 
-            cmd = ['converteac3.sh', local_path]
+            cmd = ['./converteac3.sh', local_path]
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             for line in p.stdout:
                 print(line)
                 _LOGGER.info(line)
             p.wait()
+
+        # Clear dicts
+        id_dict = []
 
         # Check every 10 minutes
         time.sleep(600)
