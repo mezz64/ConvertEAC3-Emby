@@ -74,11 +74,11 @@ INFILE=$1
 
   # Figure out what we have...
   # Use mkvmerge -i to get track id of first AC-3/E-AC-3 audio track
-  TRACK=$(mkvmerge -i "$INFILE" | grep -m 1 "${AUDIOTRACKPREFIX}AC-3/E-AC-3)" | cut -d ":" -f 1 | cut -d " " -f 3)
+  TRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "${AUDIOTRACKPREFIX}AC-3/E-AC-3)" | cut -d ":" -f 1 | cut -d " " -f 3)
 
   echo "AUDIOTRACK_ID=${TRACK}"
 
-  TOTALTRACKS=$(($(mkvmerge -i "$INFILE" | wc -l)-1))
+  TOTALTRACKS=$(($(mkvmerge -i "${INFILE}" | wc -l)-1))
 
   # Check to make sure we have a possible track
   if [ -z $TRACK ]; then
@@ -87,7 +87,7 @@ INFILE=$1
   fi
 
   # Get track information from mkvinfo and make sure it's EAC3
-  INFO=$(mkvinfo "$INFILE")
+  INFO=$(mkvinfo "${INFILE}")
   FIRSTLINE=$(echo "$INFO" | grep -n -m 1 "mkvextract: $TRACK" | cut -d ":" -f 1)
   INFO=$(echo "$INFO" | tail -n +$FIRSTLINE)
   LASTLINE=$(echo "$INFO" | grep -n -m 1 "mkvextract: $(($TRACK+1))" | cut -d ":" -f 1)
@@ -110,7 +110,7 @@ INFILE=$1
   if [ $CODEC = "A_EAC3" ]; then
     # work it
     echo "Generating AC3 audio file...."
-    nice -n $PRIORITY ffmpeg -drc_scale 0 -i "$INFILE" -vn -acodec $aoutputcodec -center_mixlev $cmixlev -ab $asamplerate "$AC3FILE" &> /dev/null
+    nice -n $PRIORITY ffmpeg -drc_scale 0 -i "${INFILE}" -vn -acodec $aoutputcodec -center_mixlev $cmixlev -ab $asamplerate "$AC3FILE" &> /dev/null
 
     # Get language so we can name it correctly during merge
     LANG=$(echo "$INFO" | grep -m 1 "Language" | cut -d " " -f 5)
@@ -136,7 +136,7 @@ INFILE=$1
     # If user doesn't want the original DTS track drop it
     if [ $NOEAC3 ]; then
       # Count the number of audio tracks in the file
-      AUDIOTRACKS=$(mkvmerge -i "$INFILE" | grep "$AUDIOTRACKPREFIX" | wc -l)
+      AUDIOTRACKS=$(mkvmerge -i "${INFILE}" | grep "$AUDIOTRACKPREFIX" | wc -l)
 
       echo "AUDIOTRACKS=${AUDIOTRACKS}"
 
@@ -145,7 +145,7 @@ INFILE=$1
         CMD="$CMD -A"
       else
         # Get a list of all the other audio tracks
-        SAVETRACKS=$(mkvmerge -i "$INFILE" | grep "$AUDIOTRACKPREFIX" | cut -d ":" -f 1 | grep -vx "mkvextract: $TRACK" | cut -d " " -f 3 | awk '{ if (T == "") T=$1; else T=T","$1 } END { print T }')
+        SAVETRACKS=$(mkvmerge -i "${INFILE}" | grep "$AUDIOTRACKPREFIX" | cut -d ":" -f 1 | grep -vx "mkvextract: $TRACK" | cut -d " " -f 3 | awk '{ if (T == "") T=$1; else T=T","$1 } END { print T }')
         # And copy only those
         CMD="$CMD -a \"$SAVETRACKS\""
 
@@ -159,7 +159,7 @@ INFILE=$1
     fi
 
     # Get track ID of video track
-    VIDEOTRACK=$(mkvmerge -i "$INFILE" | grep -m 1 "$VIDEOTRACKPREFIX" | cut -d ":" -f 1 | cut -d " " -f 3)
+    VIDEOTRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "$VIDEOTRACKPREFIX" | cut -d ":" -f 1 | cut -d " " -f 3)
     # Add original MKV file, set header compression scheme
     CMD="$CMD --compression $VIDEOTRACK:$COMP \"$INFILE\""
 
@@ -189,7 +189,7 @@ INFILE=$1
     chown nobody:users "$NEWFILE"
 
     echo "Replace Original file..."
-    mv "$NEWFILE" "$INFILE"
+    mv "$NEWFILE" "${INFILE}"
 
   else
     echo "Codec is already AC3, nothing to do..."
