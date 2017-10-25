@@ -10,9 +10,12 @@ ENV GROUP_ID=100
 #ENV EMBY_USER_KEY
 #ENV EMBY_UNC
 
+RUN echo "deb http://deb.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+
 # install packages
 RUN apt-get update && \
-    apt-get install -yq mkvtoolnix ffmpeg && \
+    apt-get install -yq mkvtoolnix && \
+    apt-get install -yq -t jessie-backports ffmpeg && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pip install requests
