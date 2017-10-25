@@ -21,7 +21,7 @@ chown -R nobody:users /home
 #fi
 
 # Start program
-emby_eac3.py $EMBY_API_KEY $EMBY_USER_KEY $EMBY_URL $EMBY_UNC
+python emby_eac3.py $EMBY_API_KEY $EMBY_USER_KEY $EMBY_URL $EMBY_UNC
 
 #echo "[Info] Starting script"
 
