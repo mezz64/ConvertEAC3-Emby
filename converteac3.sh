@@ -72,10 +72,7 @@ INFILE=$1
 
   # Setup temporary files
   AC3FILE="/config/$NAME.ac3"
-  NEWFILE="/config/$NAME_AC3.mkv"
-
-  RAW=$(mkvmerge -i "${INFILE}")
-  echo "${RAW}"
+  NEWFILE="/config/${NAME}_AC3.mkv"
 
   # Figure out what we have...
   # Use mkvmerge -i to get track id of first AC-3/E-AC-3 audio track
@@ -193,7 +190,7 @@ INFILE=$1
     # Fix permissions for unraid
     chown nobody:users "$NEWFILE"
 
-    echo "Replace Original file..."
+    echo "Replacing Original file..."
     mv "$NEWFILE" "${INFILE}"
 
   else
@@ -201,5 +198,6 @@ INFILE=$1
   fi
 
 #done
+echo "Conversion of %{NAME} complete."
 
 shopt -u nocaseglob
