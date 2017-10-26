@@ -70,8 +70,8 @@ def main():
             cmd = ['./converteac3.sh', local_path]
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             for line in p.stdout:
-                print(line)
-                _LOGGER.info(line)
+                print(line.decode('utf-8'))
+                _LOGGER.info(line.decode('utf-8'))
             p.wait()
 
         # Clear dicts

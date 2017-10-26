@@ -64,9 +64,11 @@ INFILE=$1
 
   #Root path
   DIR=$(dirname "$INFILE")
+  echo $DIR
 
   # File name without the extension
   NAME=$(basename "$INFILE" .mkv)
+  echo $NAME
 
   # Setup temporary files
   AC3FILE="$NAME.ac3"
@@ -74,7 +76,7 @@ INFILE=$1
 
   # Figure out what we have...
   # Use mkvmerge -i to get track id of first AC-3/E-AC-3 audio track
-  TRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "${AUDIOTRACKPREFIX}AC-3/E-AC-3)" | cut -d ":" -f 1 | cut -d " " -f 3)
+  TRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "${AUDIOTRACKPREFIX}E-AC-3)" | cut -d ":" -f 1 | cut -d " " -f 3)
 
   echo "AUDIOTRACK_ID=${TRACK}"
 
