@@ -36,7 +36,7 @@ def main():
     list_url = server_url + "/Reports/Items?StartIndex=0&Limit=10000&IncludeItemTypes=Episode&HasQueryLimit=true&GroupBy=None&ReportView=ReportData&DisplayType=Screen&UserId=" \
         + user_key + "&SortOrder=Ascending&ReportColumns=CName%7CEpisodeSeries%7CSeason%7CEpisodeNumber%7CVideo%7CAudio%7CPath&ExportType=CSV"
 
-    print("Starting Emby Update Fetch Loop...")
+    _LOGGER.info("Starting Emby Update Fetch Loop...")
     while True:
         try:
             response = emby_request.get(list_url)
@@ -70,8 +70,7 @@ def main():
             cmd = ['./converteac3.sh', local_path]
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             for line in p.stdout:
-                print(line.decode('utf-8'))
-                _LOGGER.info(line.decode('utf-8'))
+                _LOGGER.info("BASH: " + line.decode('utf-8').strip())
             p.wait()
 
         # Clear dicts
