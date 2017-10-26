@@ -74,6 +74,9 @@ INFILE=$1
   AC3FILE="$NAME.ac3"
   NEWFILE="$NAME_AC3.mkv"
 
+  RAW=$(mkvmerge -i "${INFILE}")
+  echo "${RAW}"
+
   # Figure out what we have...
   # Use mkvmerge -i to get track id of first AC-3/E-AC-3 audio track
   TRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "${AUDIOTRACKPREFIX}E-AC-3)" | cut -d ":" -f 1 | cut -d " " -f 3)
