@@ -74,6 +74,8 @@ INFILE=$1
   AC3FILE="/config/$NAME.ac3"
   NEWFILE="/config/${NAME}_AC3.mkv"
 
+  RAW_INFO=$(mkvmerge -i "${INFILE}")
+
   # Figure out what we have...
   # Use mkvmerge -i to get track id of first AC-3/E-AC-3 audio track
   TRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "${AUDIOTRACKPREFIX}AC3/EAC3)" | cut -d ":" -f 1 | cut -d " " -f 3)
@@ -125,64 +127,26 @@ INFILE=$1
     # Setup to do the merge
 
     # Start to "build" command
-    CMD="nice -n $PRIORITY mkvmerge"
-
-    # Puts the AC3 track as the second in the file if indicated as initial
-    #if [ $INITIAL = 1 ]; then
-    #CMD="$CMD --track-order 0:1,1:0"
-    #fi
-
-    # Declare output file
-    CMD="$CMD -o \"$NEWFILE\""
-
-    # If user doesn't want the original DTS track drop it
-    if [ $NOEAC3 ]; then
-      # Count the number of audio tracks in the file
-      AUDIOTRACKS=$(mkvmerge -i "${INFILE}" | grep "$AUDIOTRACKPREFIX" | wc -l)
-
-      echo "AUDIOTRACKS=${AUDIOTRACKS}"
-
-      if [ $AUDIOTRACKS -eq 1 ]; then
-        # If there is only the EAC3 audio track then drop all audio tracks
-        CMD="$CMD -A"
-      else
-        # Get a list of all the other audio tracks
-        SAVETRACKS=$(mkvmerge -i "${INFILE}" | grep "$AUDIOTRACKPREFIX" | cut -d ":" -f 1 | grep -vx "mkvextract: $TRACK" | cut -d " " -f 3 | awk '{ if (T == "") T=$1; else T=T","$1 } END { print T }')
-        # And copy only those
-        CMD="$CMD -a \"$SAVETRACKS\""
-
-        # Set header compression scheme for all saved tracks
-        while IFS="," read -ra TID; do
-          for tid in "${TID[@]}"; do
-            CMD="$CMD --compression $tid:$COMP"
-          done
-        done <<< $SAVETRACKS
-      fi
-    fi
+    CMD="nice -n $PRIORITY mkvmerge -o \"$NEWFILE\" -A"
 
     # Get track ID of video track
-    VIDEOTRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "$VIDEOTRACKPREFIX" | cut -d ":" -f 1 | cut -d " " -f 3)
+    #VIDEOTRACK=$(mkvmerge -i "${INFILE}" | grep -m 1 "$VIDEOTRACKPREFIX" | cut -d ":" -f 1 | cut -d " " -f 3)
+    VIDEOTRACK=$(echo "$RAW_INFO" | grep -m 1 "${VIDEOTRACKPREFIX}" | cut -d ":" -f 1 | cut -d " " -f 3)
     # Add original MKV file, set header compression scheme
-    CMD="$CMD --compression $VIDEOTRACK:$COMP \"$INFILE\""
-
-
-    # If user wants new AC3 as default then add appropriate arguments to command
-    if [ $DEFAULT ]; then
-      CMD="$CMD --default-track 0"
-    fi
+    CMD_VID="--compression $VIDEOTRACK:$COMP \"$INFILE\""
 
     # If the language was set for the original EAC3 track set it for the AC3
     if [ $LANG ]; then
-      CMD="$CMD --language 0:$LANG"
+      CMD_LANG="--language 0:$LANG"
     fi
 
     # Set track compression scheme and append new AC3
-    CMD="$CMD --compression 0:$COMP \"$AC3FILE\""
-
+    CMD_AUDIO="--compression 0:$COMP \"$AC3FILE\""
 
     echo "Muxing files back together...."
-    echo "CMD=${CMD}"
-    eval $CMD &> /dev/null
+    #echo "CMD=${CMD}"
+    #eval $CMD &> /dev/null
+    nice -n $PRIORITY mkvmerge -o "${NEWFILE}" -A "${CMD_VID}" "${CMD_LANG}" "${CMD_AUDIO}" &> /dev/null
 
     echo "Removing temporary AC3 file...."
     rm -f "$AC3FILE"
@@ -198,6 +162,6 @@ INFILE=$1
   fi
 
 #done
-echo "Conversion of %{NAME} complete."
+echo "Conversion of ${NAME} complete."
 
 shopt -u nocaseglob
