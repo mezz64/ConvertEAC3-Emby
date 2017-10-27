@@ -6,6 +6,7 @@ import sys
 import time
 import subprocess
 import logging
+import shutil
 import requests
 
 _LOGGER = logging.getLogger(__name__)
@@ -131,7 +132,7 @@ def convertEAC3(file_path):
     os.chown(newfile, 99, 100)
 
     # Overwrite existing with new file
-    os.rename(newfile, file_path)
+    shutil.move(newfile, file_path)
 
     # We are done
     logline = "Conversion of " + name + " is complete."
