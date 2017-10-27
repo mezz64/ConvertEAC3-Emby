@@ -28,16 +28,10 @@ RUN \
 ADD start.sh /start.sh
 RUN chmod +x /start.sh
 
-#Add conversion script
-ADD converteac3.sh /converteac3.sh
-RUN chmod +x /converteac3.sh
-
 #Add python script
 ADD emby_eac3.py /emby_eac3.py
 RUN chmod +x /emby_eac3.py
 
 VOLUME ["/config"]
-
-#WORKDIR /config
 
 ENTRYPOINT ["/start.sh"]
