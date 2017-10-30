@@ -98,6 +98,7 @@ def convertEAC3(file_path):
         result = subprocess.run(cmd, stdout=subprocess.DEVNULL)
     else:
         print("EAC3 Audio Track Could Not Be Verified.")
+        return
 
     # Get ID of video track
     video_track_id = None
@@ -126,7 +127,11 @@ def convertEAC3(file_path):
     logline = "Removing temporary AC3 file..."
     print(logline)
     _LOGGER.info(logline)
-    os.remove(ac3file)
+    try:
+        os.remove(ac3file)
+    except FileNotFoundError:
+        _LOGGER.info("AC3 File doesn't exist, quitting.")
+        return
 
     # Explicitly set new file permissions
     os.chown(newfile, 99, 100)
