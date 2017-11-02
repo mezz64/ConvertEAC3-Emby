@@ -10,7 +10,7 @@ import shutil
 import requests
 
 _LOGGER = logging.getLogger(__name__)
-logging.basicConfig(filename='/config/embyac3.log', filemode='a', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logging.basicConfig(filename='/config/embyac3.log', filemode='a', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 
 DEFAULT_HEADERS = {
     'Content-Type': "application/json",
@@ -194,8 +194,8 @@ def main():
             local_path = info['MediaSources'][0]['Path'].replace("\\", "/")
             local_path = local_path.replace(unc_path, "/tv_mnt")
 
-            print(local_path)
-            _LOGGER.info(local_path)
+            print("Found: " + local_path)
+            _LOGGER.info("Found: " + local_path)
 
             convertEAC3(local_path)
 
