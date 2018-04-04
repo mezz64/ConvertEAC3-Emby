@@ -168,13 +168,18 @@ def main():
 
     _LOGGER.info("Starting Emby Update Fetch Loop...")
     while True:
-        try:
-            response = emby_request.get(list_url)
-        except requests.exceptions.RequestException as err:
-            _LOGGER.error('Requests error getting episode list: %s', err)
-            return
-        else:
-            episode_list = response.json()
+        #Nested while loop to keep trying to connect rather than fail
+        while True:
+            try:
+                response = emby_request.get(list_url)
+            except requests.exceptions.RequestException as err:
+                _LOGGER.error('Requests error getting episode list: %s', err)
+                #Wait, then try again
+                time.sleep(60)
+                continue
+            else:
+                episode_list = response.json()
+                break
 
         for episode in episode_list['Rows']:
             if episode['Columns'][4]['Name'] == audio_type:
