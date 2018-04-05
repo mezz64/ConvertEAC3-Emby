@@ -178,8 +178,12 @@ def main():
                 time.sleep(60)
                 continue
             else:
-                episode_list = response.json()
-                break
+                try:
+                    episode_list = response.json()
+                except ValueError:
+                    continue
+                else:
+                    break
 
         for episode in episode_list['Rows']:
             if episode['Columns'][4]['Name'] == audio_type:
