@@ -186,8 +186,8 @@ def main():
                     break
 
         for episode in episode_list['Rows']:
-            if episode['Columns'][4]['Name'] == audio_type:
-                #print(episode['Columns'][0]['Name'] + " - " + episode['Id'] + " - " + episode['Columns'][4]['Name'])
+            if episode['Columns'][5]['Name'] == audio_type:
+                #print(episode['Columns'][0]['Name'] + " - " + episode['Id'] + " - " + episode['Columns'][5]['Name'])
                 id_dict.append(episode['Id'])
 
         for epid in id_dict:
