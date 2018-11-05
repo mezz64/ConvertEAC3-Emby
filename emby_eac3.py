@@ -39,6 +39,7 @@ def convertEAC3(file_path):
 
     audio_track_id = None
     for line in file_info.split('\n'):
+        _LOGGER.info("Audio track found: " + line)
         if AUDIOTRACKPREFIX + "AC3/EAC3)" in line:
             audio_track_id = line.split(':')[0].split(' ')[2]
             break
